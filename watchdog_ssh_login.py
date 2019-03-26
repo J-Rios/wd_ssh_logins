@@ -44,6 +44,7 @@ MAIN_SCRIPT_PATH = path.dirname(path.realpath(__file__))
 ### Plugins to use ###
 
 PLUGINS = [
+    f"{MAIN_SCRIPT_PATH}/plugins/log2file_login/log2file_login.py",
     f"{MAIN_SCRIPT_PATH}/plugins/gmail_notifier/gmail_notifier.py"
 ]
 
