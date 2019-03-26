@@ -22,9 +22,8 @@ Version:
 ### Imported modules ###
 
 from sys import argv
-import socket
-
 from smtplib import SMTP, SMTPException
+import socket
 
 ####################################################################################################
 
@@ -65,8 +64,6 @@ def get_system_ip_address():
 def main():
     '''Main Function.'''
     # Check if script is running with expected argument and get connection from
-    for a in argv:
-        print(a)
     if len(argv) != 2:
         print("Error: This script needs 1 argument (email message content).")
         finish(1)
