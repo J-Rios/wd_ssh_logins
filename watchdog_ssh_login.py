@@ -41,7 +41,7 @@ MAIN_SCRIPT_PATH = path.dirname(path.realpath(__file__))
 
 ####################################################################################################
 
-### Plugins to use ###
+### Plugins to use (comment/uncomment to disable/enable plugins) ###
 
 PLUGINS = [
     f"{MAIN_SCRIPT_PATH}/plugins/log2file_login/log2file_login.py",
