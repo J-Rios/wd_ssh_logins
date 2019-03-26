@@ -28,7 +28,7 @@ Version:
 
 ### Imported modules ###
 
-from os import geteuid
+from os import path, geteuid
 from sys import exit
 from time import sleep
 from signal import signal, SIGTERM, SIGINT
@@ -37,14 +37,26 @@ from commons import *
 
 ####################################################################################################
 
+MAIN_SCRIPT_PATH = path.dirname(path.realpath(__file__))
+
+####################################################################################################
+
+### Plugins to use ###
+
+PLUGINS = [
+    f"{MAIN_SCRIPT_PATH}/plugins/gmail_notifier/gmail_notifier.py"
+]
+
+####################################################################################################
+
 ### Main and Finish Functions ###
 
 def main():
     '''Main Function.'''
     # Check if it is running with root privileges
-    if geteuid() != 0:
-        print("You must run this tool with root privileges.\n")
-        finish(1)
+    #if geteuid() != 0:
+        #print("You must run this tool with root privileges.\n")
+        #finish(1)
     print("Script started.")
     # Load actual SSH logins
     ssh_logins = system_call("./ssh_check_logins.sh")
@@ -58,16 +70,17 @@ def main():
         try:
             # Check if there is a new SSH login
             new_logins = []
-            ssh_logins = system_call("./ssh_check_logins.sh")
+            ssh_logins = system_call(f"{MAIN_SCRIPT_PATH}/ssh_check_logins.sh")
             l_logins = ssh_logins.split("\n")
             for login in l_logins:
                 if login not in l_last_logins:
                     new_logins.append(login)
             l_last_logins = l_logins
             # Launch plugins if any login was detected
-            if len(new_logins) > 0:
-                for login in new_logins:
-                    print(f"New login: {login}")
+            for login in new_logins:
+                print(f"New login: {login}")
+                for plugin in PLUGINS:
+                    print(system_call(f"python3 {plugin} \"{login}\""))
             # Wait 5s between checks
             sleep(5)
         except Exception as e:
