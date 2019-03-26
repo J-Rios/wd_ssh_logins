@@ -28,7 +28,7 @@ Version:
 
 ### Imported modules ###
 
-from os import path, geteuid
+from os import path
 from sys import exit
 from time import sleep
 from signal import signal, SIGTERM, SIGINT
@@ -53,10 +53,6 @@ PLUGINS = [
 
 def main():
     '''Main Function.'''
-    # Check if it is running with root privileges
-    #if geteuid() != 0:
-        #print("You must run this tool with root privileges.\n")
-        #finish(1)
     print("Script started.")
     # Load actual SSH logins
     ssh_logins = system_call("./ssh_check_logins.sh")
