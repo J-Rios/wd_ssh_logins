@@ -19,7 +19,7 @@ Author:
 Creation date:
     25/03/2019
 Last modified date:
-    25/03/2019
+    28/03/2019
 Version:
     0.0.1
 '''
@@ -32,6 +32,7 @@ from os import path
 from sys import exit
 from time import sleep
 from signal import signal, SIGTERM, SIGINT
+from threading import Thread
 
 from commons import *
 
@@ -48,6 +49,14 @@ PLUGINS = [
     f"{MAIN_SCRIPT_PATH}/plugins/gmail_notifier/gmail_notifier.py",
     f"{MAIN_SCRIPT_PATH}/plugins/telegram_bot_notifier/tlg_bot_notifier.py"
 ]
+
+####################################################################################################
+
+### Threading Function that call plugins ###
+
+def run_plugin(plugin, login):
+    '''make a system call to execute the provided plugin.'''
+    print(system_call(f"python3 {plugin} \"{login}\""))
 
 ####################################################################################################
 
@@ -78,7 +87,9 @@ def main():
             for login in new_logins:
                 printts(f"New login detected: {login}")
                 for plugin in PLUGINS:
-                    print(system_call(f"python3 {plugin} \"{login}\""))
+                    # Launch a new thread to handle plugin execution
+                    th = Thread(target=run_plugin, args=(plugin, login))
+                    th.start()
             # Wait 5s between checks
             sleep(5)
         except Exception as e:
