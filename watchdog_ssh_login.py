@@ -34,7 +34,7 @@ from time import sleep
 from signal import signal, SIGTERM, SIGINT
 from threading import Thread
 
-from commons import *
+from commons import printts, system_call
 
 ####################################################################################################
 
@@ -90,8 +90,8 @@ def main():
                     # Launch a new thread to handle plugin execution
                     th = Thread(target=run_plugin, args=(plugin, login))
                     th.start()
-            # Wait 5s between checks
-            sleep(5)
+            # Wait 10s between checks
+            sleep(10)
         except Exception as e:
             printts(f"{e}")
             finish(1)
