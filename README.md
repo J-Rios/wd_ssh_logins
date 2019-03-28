@@ -3,5 +3,5 @@ Linux tool that periodically monitorize and check for successfull SSH logins in 
 
 Notes:
   - Tool developed for Python 3.6 or higher.
-  - At the moment, the tool only support Debian/Ubuntu distributions (the ones that uses with /var/log/auth.log file).
-  - At the moment, the tool only detect SSH logins for systems with english locales language configured system.
+  - At the moment, the tool only support Debian/Ubuntu distributions (the ones that uses /var/log/auth.log file).
+  - At the moment, the tool just detect SSH logins for systems configured in english language.
