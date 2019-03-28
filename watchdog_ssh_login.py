@@ -55,7 +55,7 @@ PLUGINS = [
 
 def main():
     '''Main Function.'''
-    print("Script started.")
+    printts("Script started.")
     # Load actual SSH logins
     ssh_logins = system_call("./ssh_check_logins.sh")
     l_last_logins = ssh_logins.split("\n")
@@ -76,13 +76,13 @@ def main():
             l_last_logins = l_logins
             # Launch plugins if any login was detected
             for login in new_logins:
-                print(f"New login: {login}")
+                printts(f"New login detected: {login}")
                 for plugin in PLUGINS:
                     print(system_call(f"python3 {plugin} \"{login}\""))
             # Wait 5s between checks
             sleep(5)
         except Exception as e:
-            print(f"{e}")
+            printts(f"{e}")
             finish(1)
     finish(0)
 
@@ -92,7 +92,7 @@ def main():
 
 def finish(return_code):
     '''Finish function.'''
-    print(f"\nScript stoped, exit({return_code}).\n")
+    printts(f"\nScript stoped, exit({return_code}).\n")
     exit(return_code)
 
 

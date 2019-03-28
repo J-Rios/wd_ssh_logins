@@ -20,8 +20,31 @@ Version:
 
 ### Imported modules ###
 from os import popen, path, makedirs
+from datetime import datetime
 
 ####################################################################################################
+
+def printts(text="", timestamp=True):
+    '''Print with timestamp.'''
+    # Normal print if timestamp is disabled or no text provided
+    if not timestamp or text == "":
+        print(text)
+    else:
+        # Normal print for all text start EOLs
+        num_eol = -1
+        for character in text:
+            if character == '\n':
+                print()
+                num_eol = num_eol + 1
+            else:
+                break
+        # Remove all text start EOLs (if any)
+        if num_eol != -1:
+            text = text [num_eol+1:]
+        # Get actual time and print text with timestamp
+        actual_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"{actual_date}: {text}")
+
 
 def system_call(command):
     '''Make a system call and return stdout response.'''
