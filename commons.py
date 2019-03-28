@@ -20,6 +20,7 @@ Version:
 
 ### Imported modules ###
 from os import popen, path, makedirs
+from sys import version_info
 from datetime import datetime
 
 ####################################################################################################
@@ -44,6 +45,20 @@ def printts(text="", timestamp=True):
         # Get actual time and print text with timestamp
         actual_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         print(f"{actual_date}: {text}")
+
+
+def is_running_with_py2():
+    '''Check if script is running using Python 2.'''
+    if version_info[0] == 2:
+        return True
+    return False
+
+
+def is_running_with_py3():
+    '''Check if script is running using Python 3.'''
+    if version_info[0] == 3:
+        return True
+    return False
 
 
 def system_call(command):
@@ -81,3 +96,23 @@ def file_write(file_path, text=""):
             f.write(text)
     except Exception as e:
         print(f"ERROR - Can't write to file {file_path}. {e}")
+
+
+def file_read_all_text(file_path):
+    '''Read all text file content and return it in a string.'''
+    read = ""
+    # Check if file doesnt exists
+    if not path.exists(file_path):
+        print("ERROR - File {} not found.".format(file_path))
+    # File exists, so open and read it
+    else:
+        try:
+            if is_running_with_py3():
+                with open(file_path, "r", encoding="utf-8") as f:
+                    read = f.read()
+            else:
+                with open(file_path, "r") as f:
+                    read = f.read()
+        except Exception as e:
+            print("ERROR - Can't open and read file {}. {}".format(file_path, str(e)))
+    return read

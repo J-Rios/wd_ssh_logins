@@ -34,7 +34,7 @@ from time import sleep
 from signal import signal, SIGTERM, SIGINT
 from threading import Thread
 
-from commons import printts, system_call
+from commons import printts, system_call, file_read_all_text
 
 ####################################################################################################
 
@@ -49,6 +49,12 @@ PLUGINS = [
     f"{MAIN_SCRIPT_PATH}/plugins/gmail_notifier/gmail_notifier.py",
     f"{MAIN_SCRIPT_PATH}/plugins/telegram_bot_notifier/tlg_bot_notifier.py"
 ]
+
+####################################################################################################
+
+### Withelist file ###
+
+WHITELIST_F = f"{MAIN_SCRIPT_PATH}/whitelist.txt"
 
 ####################################################################################################
 
@@ -86,6 +92,14 @@ def main():
             # Launch plugins if any login was detected
             for login in new_logins:
                 printts(f"New login detected: {login}")
+                # Check and ignore if it is in the withelist
+                withelist_text = file_read_all_text(WHITELIST_F)
+                withelist_text = withelist_text.replace("\r,", "")
+                withelist = withelist_text.split("\n")
+                login_ip = login[login.find(" - ")+3:login.rfind(":")]
+                if login_ip in withelist:
+                    print(f"Ignoring known connection from {login_ip}")
+                    continue
                 for plugin in PLUGINS:
                     # Launch a new thread to handle plugin execution
                     th = Thread(target=run_plugin, args=(plugin, login))

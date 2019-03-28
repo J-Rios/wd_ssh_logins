@@ -1,0 +1,9 @@
+
+### Place in this file the known connections IP address to whitelist them ###
+
+# Next two address are for localhost
+::1
+127.0.0.1
+
+
+
