@@ -15,7 +15,7 @@ Version:
     1.1.0
 '''
 
-####################################################################################################
+###############################################################################
 
 ### Imported modules ###
 
@@ -24,20 +24,34 @@ import sys
 import urllib.parse
 import urllib.request
 
-####################################################################################################
+###############################################################################
 
 ### Constants ###
 
 BOT_TOKEN = "XXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 TO_CHAT_ID = 000000000
 
-MSG_BASE = "SSH Login Detected\n\nSystem:\n{}\n\nConnection from:\n<pre>{}</pre>"
+MSG_TEXT = \
+    "SSH Login\n" \
+    "——————————\n" \
+    "\n" \
+    "System:\n" \
+    "    {} ({}) \n" \
+    "\n" \
+    "User:\n" \
+    "    {}\n" \
+    "\n" \
+    "From:\n" \
+    "    {}\n" \
+    "\n" \
+    "Date:\n" \
+    "    {}\n"
 
 TLG_BOT_API_URL = "https://api.telegram.org"
 TLG_BOT_API = f"{TLG_BOT_API_URL}/bot{BOT_TOKEN}"
 TLG_BOT_API_SEND_MSG = f"{TLG_BOT_API}/sendMessage"
 
-####################################################################################################
+###############################################################################
 
 ### Auxiliary Functions ###
 
@@ -66,21 +80,25 @@ def tlg_send_msg(chat_id, msg_text):
         print(f"Fail to send Telegram Message: {e}")
         return False
 
-####################################################################################################
+###############################################################################
 
 ### Main and Finish Functions ###
 
 def main():
     '''Main Function.'''
-    # Check if script is running with expected argument and get connection from
+    # Check if script is running with expected number of argument
     if len(sys.argv) != 2:
         print("Error: This script needs 1 argument (email message content).")
         finish(1)
-    connection_from = sys.argv[1]
+    connection_data = sys.argv[1].split(" ")
+    date = connection_data[0]
+    system_host = connection_data[1]
+    user = connection_data[2]
+    connection_from = connection_data[4]
     # Get system IP address
     system_ip = get_system_ip_address()
     # Create message and try to send it
-    msg = MSG_BASE.format(system_ip, connection_from)
+    msg = MSG_TEXT.format(system_host, system_ip, user, connection_from, date)
     if tlg_send_msg(TO_CHAT_ID, msg):
         print("Telegram message successfully sent.")
     else:
@@ -88,7 +106,7 @@ def main():
         finish(1)
     finish(0)
 
-####################################################################################################
+###############################################################################
 
 ### Script End Functions ###
 
@@ -97,7 +115,7 @@ def finish(return_code):
     print(f"\nPlugin stopped, exit({return_code}).\n")
     sys.exit(return_code)
 
-####################################################################################################
+###############################################################################
 
 ### Script Input - Main Script ###
 
