@@ -5,26 +5,24 @@
 Script:
     tlg_bot_notifier.py
 Description:
-    Watchdog SSH Login project plugin that send a telegram message to specified chat through a 
-    telegram Bot to notify SSH login detection.
+    Watchdog SSH Login project plugin that send a telegram message to
+    specified chat through a telegram Bot to notify SSH login detection.
 Author:
     Jose Miguel Rios Rubio
-Creation date:
-    27/03/2019
-Last modified date:
-    27/03/2019
+Date:
+    10/05/2025
 Version:
-    0.0.1
+    1.1.0
 '''
 
 ####################################################################################################
 
 ### Imported modules ###
 
-from sys import argv
 import socket
-from telegram.ext import Updater
-from telegram import ParseMode
+import sys
+import urllib.parse
+import urllib.request
 
 ####################################################################################################
 
@@ -35,9 +33,13 @@ TO_CHAT_ID = 000000000
 
 MSG_BASE = "SSH Login Detected\n\nSystem:\n{}\n\nConnection from:\n<pre>{}</pre>"
 
+TLG_BOT_API_URL = "https://api.telegram.org"
+TLG_BOT_API = f"{TLG_BOT_API_URL}/bot{BOT_TOKEN}"
+TLG_BOT_API_SEND_MSG = f"{TLG_BOT_API}/sendMessage"
+
 ####################################################################################################
 
-### Auxiliar Functions ###
+### Auxiliary Functions ###
 
 def get_system_ip_address():
     '''Get current system local IP address.'''
@@ -48,6 +50,22 @@ def get_system_ip_address():
     s.close()
     return ip_addr
 
+def tlg_send_msg(chat_id, msg_text):
+    '''Send a Telegram message.'''
+    params = {
+        "chat_id": str(chat_id),
+        "text": msg_text,
+        "parse_mode": "HTML"
+    }
+    try:
+        url = TLG_BOT_API_SEND_MSG + "?" + urllib.parse.urlencode(params)
+        with urllib.request.urlopen(url) as response:
+            response = response.read().decode("utf-8")
+            return True
+    except Exception as e:
+        print(f"Fail to send Telegram Message: {e}")
+        return False
+
 ####################################################################################################
 
 ### Main and Finish Functions ###
@@ -55,21 +73,18 @@ def get_system_ip_address():
 def main():
     '''Main Function.'''
     # Check if script is running with expected argument and get connection from
-    if len(argv) != 2:
+    if len(sys.argv) != 2:
         print("Error: This script needs 1 argument (email message content).")
         finish(1)
-    connection_from = argv[1]
+    connection_from = sys.argv[1]
     # Get system IP address
     system_ip = get_system_ip_address()
-    # Create the Bot
-    Bot = Updater(BOT_TOKEN).bot
     # Create message and try to send it
     msg = MSG_BASE.format(system_ip, connection_from)
-    try:
-        Bot.send_message(TO_CHAT_ID, msg, ParseMode.HTML)
+    if tlg_send_msg(TO_CHAT_ID, msg):
         print("Telegram message successfully sent.")
-    except Exception as e:
-        print(f"Error: Unable to send message. {e}")
+    else:
+        print("Error: Unable to send message.")
         finish(1)
     finish(0)
 
@@ -79,8 +94,8 @@ def main():
 
 def finish(return_code):
     '''Finish function.'''
-    print(f"\nPlugin stoped, exit({return_code}).\n")
-    exit(return_code)
+    print(f"\nPlugin stopped, exit({return_code}).\n")
+    sys.exit(return_code)
 
 ####################################################################################################
 
