@@ -22,6 +22,7 @@ Version:
 from os import popen, path, makedirs
 from sys import version_info
 from datetime import datetime
+from datetime import UTC as DATETIME_UTC
 
 ####################################################################################################
 
@@ -43,7 +44,7 @@ def printts(text="", timestamp=True):
         if num_eol != -1:
             text = text [num_eol+1:]
         # Get actual time and print text with timestamp
-        actual_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        actual_date = datetime.now(DATETIME_UTC).strftime("%Y-%m-%d %H:%M:%S")
         print(f"{actual_date}: {text}")
 
 

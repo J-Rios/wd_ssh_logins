@@ -12,7 +12,7 @@ Author:
 Date:
     10/05/2025
 Version:
-    1.0.0
+    1.1.0
 '''
 
 ###############################################################################
@@ -21,6 +21,7 @@ Version:
 from sys import argv
 from os import path, makedirs, environ
 from datetime import datetime
+from datetime import UTC as DATETIME_UTC
 from time import strftime
 
 ###############################################################################
@@ -74,7 +75,7 @@ def main():
         finish(1)
     login = argv[1]
     # Create timestamp and store login in file
-    actual_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    actual_date = datetime.now(DATETIME_UTC).strftime("%Y-%m-%d %H:%M:%S")
     to_save_text = f"[{actual_date}] {login}\n"
     file_write(LOG_FILE, to_save_text)
     print(f"Login stored in {LOG_FILE}")
