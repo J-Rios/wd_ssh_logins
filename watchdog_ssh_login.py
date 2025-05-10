@@ -5,42 +5,43 @@
 Script:
     watchdog_ssh_login.py
 Description:
-    Script that periodically check for successfull SSH logins in the actual system, determine if a 
-    new login has occurred, and run the response subprograms (plugins) to act accordingly when a 
-    login has been detected.
+    Script that periodically check for successful SSH logins in the
+    actual system, determine if a new login has occurred, and run the
+    response subprograms (plugins) to act accordingly when a login has
+    been detected.
     Examples of response plugins subprograms:
-      - Plugin that notify the detected SSH login to system owner via email, Telegram, Slack, 
-      web service, webhook, etc.
+      - Plugin that notify the detected SSH login to system owner via
+      email, Telegram, Slack, web service, webhook, etc.
       - Plugin to execute or make a custom action in the system.
-      - Plugin to setup an specified system configuration to that loged user.
+      - Plugin to setup a specified system configuration for that
+      logged user.
       - Whatever that crosses your mind...
 Author:
     Jose Miguel Rios Rubio
-Creation date:
-    25/03/2019
-Last modified date:
-    28/03/2019
+Date:
+    10/05/2025
 Version:
-    0.0.1
+    1.1.0
 '''
 
-####################################################################################################
+###############################################################################
 
 ### Imported modules ###
 
+import sys
 from os import path
-from sys import exit
 from time import sleep
 from signal import signal, SIGTERM, SIGINT
 from threading import Thread
 
 from commons import printts, system_call, file_read_all_text
 
-####################################################################################################
+###############################################################################
 
 MAIN_SCRIPT_PATH = path.dirname(path.realpath(__file__))
+BASH_SCRIPT_CHECK_SSH_CONNECTION = f"{MAIN_SCRIPT_PATH}/ssh_check_logins.sh"
 
-####################################################################################################
+###############################################################################
 
 ### Plugins to use (comment/uncomment to disable/enable plugins) ###
 
@@ -50,13 +51,13 @@ PLUGINS = [
     f"{MAIN_SCRIPT_PATH}/plugins/telegram_bot_notifier/tlg_bot_notifier.py"
 ]
 
-####################################################################################################
+###############################################################################
 
 ### Withelist file ###
 
 WHITELIST_F = f"{MAIN_SCRIPT_PATH}/whitelist.txt"
 
-####################################################################################################
+###############################################################################
 
 ### Threading Function that call plugins ###
 
@@ -64,7 +65,7 @@ def run_plugin(plugin, login):
     '''make a system call to execute the provided plugin.'''
     print(system_call(f"python3 {plugin} \"{login}\""))
 
-####################################################################################################
+###############################################################################
 
 ### Main and Finish Functions ###
 
@@ -83,7 +84,7 @@ def main():
         try:
             # Check if there is a new SSH login
             new_logins = []
-            ssh_logins = system_call(f"{MAIN_SCRIPT_PATH}/ssh_check_logins.sh")
+            ssh_logins = system_call(BASH_SCRIPT_CHECK_SSH_CONNECTION)
             l_logins = ssh_logins.split("\n")
             for login in l_logins:
                 if login not in l_last_logins:
@@ -111,25 +112,24 @@ def main():
             finish(1)
     finish(0)
 
-####################################################################################################
+###############################################################################
 
 ### Script End Functions ###
 
 def finish(return_code):
     '''Finish function.'''
     printts(f"\nScript stoped, exit({return_code}).\n")
-    exit(return_code)
-
+    sys.exit(return_code)
 
 def signal_handler(signal, frame):
-    '''Termination signals (SIGINT, SIGTERM) handler for program process.'''
+    '''Termination signals (SIGINT, SIGTERM) handler.'''
     finish(0)
 
 # Signals attachment
 signal(SIGTERM, signal_handler) # SIGTERM (kill pid) to signal_handler
 signal(SIGINT, signal_handler)  # SIGINT (Ctrl+C) to signal_handler
 
-####################################################################################################
+###############################################################################
 
 ### Script Input - Main Script ###
 

@@ -5,18 +5,17 @@
 Script:
     log2file_login.py
 Description:
-    Watchdog SSH Login project plugin that store in a file the detected login with system timestamp.
+    Watchdog SSH Login project plugin that store in a file the detected
+    login with system timestamp.
 Author:
     Jose Miguel Rios Rubio
-Creation date:
-    26/03/2019
-Last modified date:
-    26/03/2019
+Date:
+    10/05/2025
 Version:
-    0.0.1
+    1.0.0
 '''
 
-####################################################################################################
+###############################################################################
 
 ### Imported modules ###
 from sys import argv
@@ -24,19 +23,22 @@ from os import path, makedirs, environ
 from datetime import datetime
 from time import strftime
 
-####################################################################################################
+###############################################################################
 
 ### Log File ###
 
-#LOG_FILE = "/var/log/ssh_logins.log" # Note this needs system privileges to be used (sudo)
+#LOG_FILE = "/var/log/ssh_logins.log"  # This needs system privileges (sudo)
 LOG_FILE = f"{environ['HOME']}/.ssh_logins.log"
 
-####################################################################################################
+###############################################################################
 
 ### Functions ###
 
 def create_parents_dirs(file_path):
-    '''Create all parents directories from provided file path (mkdir -p $file_path).'''
+    '''
+    Create all parents directories from provided file path
+    (mkdir -p $file_path).
+    '''
     try:
         parentdirpath = path.dirname(file_path)
         if not path.exists(parentdirpath):
@@ -60,13 +62,13 @@ def file_write(file_path, text=""):
         print(f"ERROR - Can't write to file {file_path}. {e}")
         finish(1)
 
-####################################################################################################
+###############################################################################
 
 ### Main and Finish Functions ###
 
 def main():
     '''Main Function.'''
-    # Check if script is running with expected argument and get connection from
+    # Check if script is running with expected number of argument
     if len(argv) != 2:
         print("Error: This script needs 1 argument (login text).")
         finish(1)
@@ -78,7 +80,7 @@ def main():
     print(f"Login stored in {LOG_FILE}")
     finish(0)
 
-####################################################################################################
+###############################################################################
 
 ### Script End Functions ###
 
@@ -87,7 +89,7 @@ def finish(return_code):
     print(f"\nPlugin stoped, exit({return_code}).\n")
     exit(return_code)
 
-####################################################################################################
+###############################################################################
 
 ### Script Input - Main Script ###
 
